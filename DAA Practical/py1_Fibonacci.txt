@@ -109,3 +109,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+
+
+/*  ONE-MINUTE EXTERNAL EXPLANATION
+
+"In this practical, I implemented Fibonacci series using both iterative and recursive approaches and solved the Tower of Hanoi problem using recursion.
+
+In iterative Fibonacci, I used a loop and two variables to calculate the next number. In recursive Fibonacci, I used the formula F(n) = F(n-1) + F(n-2), with base conditions 0 and 1.
+
+In Tower of Hanoi, I used three rods: source, auxiliary and destination. First, I moved n-1 disks to the auxiliary rod, then moved the largest disk to the destination, and finally moved the remaining disks to the destination.
+
+The minimum number of moves required is 2ⁿ - 1." */
