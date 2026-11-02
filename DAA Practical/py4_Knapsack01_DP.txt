@@ -92,3 +92,50 @@ for row in dp:
 print("\nObservation")
 print("  Each cell stores the best value for that item prefix and capacity.")
 print("  The final cell is the answer, and the trace-back finds the items.")
+
+
+
+
+/*
+Oral explanation:
+
+"My fourth practical is the 0/1 Knapsack Problem using Dynamic Programming.
+
+Similar to Fractional Knapsack, we are given items with weights and profits, along with a fixed knapsack capacity.
+
+But the main difference is that in 0/1 Knapsack, we cannot divide an item. We can either take the complete item or leave it.
+
+To solve this problem, we use Dynamic Programming.
+
+We create a two-dimensional DP table where rows represent items and columns represent different knapsack capacities.
+
+For every item, we have two choices:
+
+First, exclude the item, which means we keep the previous maximum profit.
+
+Second, include the item, if its weight is less than or equal to the current capacity. In that case, we add its profit to the best possible profit for the remaining capacity.
+
+We select the maximum value between these two choices.
+
+The recurrence relation is:
+\[
+DP[i][w] = \max(DP[i-1][w],\ value_i + DP[i-1][w-weight_i])
+\]
+
+If the item cannot fit, we simply exclude it.
+
+After filling the table, we can also trace it backwards to identify which items were selected.
+
+The time and space complexity are both O(nW), where n is the number of items and W is the knapsack capacity."
+
+Remember:
+- Algorithm: Dynamic Programming
+- Two choices: Include or Exclude
+- Items cannot be divided.
+- Uses a 2D DP table.
+- Time complexity: O(nW).
+- Fractional Knapsack and 0/1 Knapsack are different.
+
+
+
+*/
