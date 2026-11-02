@@ -74,3 +74,42 @@ print(f"\nMaximum value = {total:.2f}")
 print("\nObservation")
 print("  Items with the highest value per unit weight are taken first. Only")
 print("  the last item is split, so the knapsack is filled exactly.")
+
+
+
+
+/*
+
+Oral explanation:
+
+"My third practical is the Fractional Knapsack Problem using the Greedy Algorithm.
+
+In this problem, we are given a set of items. Each item has a weight and a profit or value. We also have a knapsack with a limited capacity.
+
+Our objective is to maximize the total profit without exceeding the capacity of the knapsack.
+
+First, we calculate the profit-to-weight ratio for every item using the formula:
+\[
+Ratio = profit/weight
+
+Then, we sort all items in descending order according to this ratio.
+
+After sorting, we select the item with the highest ratio first. If the complete item fits inside the knapsack, we take it completely. Otherwise, we take only the required fraction of that item to fill the remaining capacity.
+
+We continue until the knapsack becomes full or all items are considered.
+
+This uses the Greedy approach because we select the locally best item at every step.
+
+The time complexity is O(n log n), mainly because of sorting."
+
+Remember:
+- Algorithm: Greedy
+- Important formula: Profit / Weight
+- Items can be divided into fractions.
+- We sort in descending order of ratio.
+- Time complexity: O(n log n).
+
+
+
+
+*/
