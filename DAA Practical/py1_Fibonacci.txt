@@ -1,0 +1,111 @@
+"""
+QUESTION 1 (DAA):
+Write a program non-recursive and recursive program to calculate Fibonacci numbers and also write recursive program to solve tower of hanoi problem and analyze their time and space complexity.
+
+HOW IT WORKS
+    F(0) = 0, F(1) = 1, F(n) = F(n-1) + F(n-2).
+
+    Recursive Fibonacci: direct translation of the formula. It recomputes the
+    same subproblems, so the time is about O(2^n) and the space is O(n) for
+    the call stack.
+
+    Iterative Fibonacci: keep only the last two values and slide the window
+    forward. Every term is computed once, so the time is O(n) and the space
+    is O(1).
+
+    Tower of Hanoi: to move n disks from source to destination,
+        1. move the top n-1 disks from source to auxiliary,
+        2. move the largest disk from source to destination,
+        3. move the n-1 disks from auxiliary to destination.
+    Base case: with 1 disk, move it directly. The number of moves is
+    2^n - 1, so the time is O(2^n) and the space is O(n) for the call stack.
+
+STEPS
+    1. Iterative Fibonacci function
+    2. Recursive Fibonacci function
+    3. Tower of Hanoi function
+    4. Menu-driven main(): the user picks an option and enters n at run time
+
+COMPLEXITY
+    Iterative Fibonacci : time O(n),   space O(1)
+    Recursive Fibonacci : time O(2^n), space O(n)
+    Tower of Hanoi      : time O(2^n), space O(n)
+
+RUN
+    python3 py1_Fibonacci.py
+
+    Choose 1, 2 or 3 from the menu, enter the value of n (or the number of
+    disks), and choose 4 to exit.
+"""
+# 1. Iterative Fibonacci
+def fibonacci_iterative(n):
+    a, b = 0, 1
+
+    if n == 0:
+        return 0
+
+    for _ in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+
+# 2. Recursive Fibonacci
+def fibonacci_recursive(n):
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    return fibonacci_recursive(n - 1) + fibonacci_recursive(n - 2)
+
+
+# 3. Tower of Hanoi
+def tower_of_hanoi(n, source, auxiliary, destination):
+    if n == 1:
+        print(f"Move disk 1 from {source} to {destination}")
+        return
+
+    tower_of_hanoi(n - 1, source, destination, auxiliary)
+    print(f"Move disk {n} from {source} to {destination}")
+    tower_of_hanoi(n - 1, auxiliary, source, destination)
+
+
+def main():
+    while True:
+        print("\n1. Iterative Fibonacci")
+        print("2. Recursive Fibonacci")
+        print("3. Tower of Hanoi")
+        print("4. Exit")
+
+        choice = int(input("Enter choice: "))
+
+        if choice == 1:
+            n = int(input("Enter n: "))
+            if n < 0:
+                print("Invalid input")
+            else:
+                print("Fibonacci =", fibonacci_iterative(n))
+
+        elif choice == 2:
+            n = int(input("Enter n: "))
+            if n < 0:
+                print("Invalid input")
+            else:
+                print("Fibonacci =", fibonacci_recursive(n))
+
+        elif choice == 3:
+            n = int(input("Enter number of disks: "))
+            if n <= 0:
+                print("Invalid input")
+            else:
+                tower_of_hanoi(n, 'A', 'B', 'C')
+
+        elif choice == 4:
+            print("Exiting...")
+            break
+
+        else:
+            print("Invalid choice")
+
+
+if __name__ == "__main__":
+    main()

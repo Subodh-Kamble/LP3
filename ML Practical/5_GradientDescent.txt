@@ -1,0 +1,51 @@
+"""
+QUESTION 5 (ML):
+Implement the Gradient Descent Algorithm to find the local minima of the
+function y = (x + 3)^2 starting from the point x = 2.
+
+HOW IT WORKS
+    1. f(x) = (x + 3)^2 is a parabola with its minimum at x = -3 (f = 0).
+    2. f'(x) = 2(x + 3) is the slope: its sign points uphill.
+    3. Update rule: x_new = x - learning_rate * f'(x).
+    4. Repeat. Steps shrink as the slope fades, so x settles near -3.
+
+    At learning rate 0.1 and 100 iterations, x ends around -2.999996.
+    A rate that is too large overshoots; 1.0 never settles.
+
+STEPS
+    1. Define the function and its derivative
+    2. Set the starting point and hyper-parameters
+    3. Gradient descent function
+    4. Run gradient descent
+    5. Print the minimum
+    6. Effect of the learning rate
+    7. Observation
+    8. Plots with matplotlib
+
+RUN
+    python3 ml/py5_GradientDescent.py
+
+    In Jupyter, open py5_GradientDescent.ipynb or split this file at the
+    "# %%" markers. This practical needs no imports and no dataset.
+"""
+# Define the function
+def f(x):
+    return (x + 3) ** 2
+
+# Define the derivative
+def derivative(x):
+    return 2 * (x + 3)
+
+# Initial values
+x = 2
+learning_rate = 0.1
+iterations = 100
+
+# Gradient Descent
+for i in range(iterations):
+    gradient = derivative(x)
+    x = x - learning_rate * gradient
+
+# Display the result
+print("Minimum point x =", round(x, 6))
+print("Minimum value y =", round(f(x), 10))

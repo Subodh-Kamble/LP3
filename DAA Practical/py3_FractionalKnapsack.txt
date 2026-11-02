@@ -1,0 +1,76 @@
+"""
+QUESTION 3 (DAA):
+Write a program to solve a fractional Knapsack problem using a greedy method.
+
+HOW IT WORKS
+    1. Compute the value/weight ratio of every item.
+    2. Sort the items by that ratio in decreasing order.
+    3. Take whole items while they fit. When the next item does not fit, take
+       the fraction that fills the remaining capacity and stop.
+
+    Taking the best deal first is optimal for the fractional version because
+    any solution can be improved by swapping a worse deal for a better one.
+
+STEPS
+    1. Imports
+    2. Input items and capacity
+    3. Greedy algorithm
+    4. Run and print the selection
+    5. Observation
+
+RUN
+    python3 daa/py3_FractionalKnapsack.py
+
+    In Jupyter, open py3_FractionalKnapsack.ipynb or split this file at the
+    "# %%" markers.
+"""
+
+# %% Step 1: Imports
+from collections import namedtuple
+
+# %% Step 2: Input items and capacity
+# Items and capacity are now read from the user at run time.
+Item = namedtuple("Item", ["index", "value", "weight", "ratio"])
+
+n = int(input("Enter number of items: "))
+items = []
+for i in range(1, n + 1):
+    value = float(input(f"Enter value of item {i}: "))
+    weight = float(input(f"Enter weight of item {i}: "))
+    items.append(Item(i, value, weight, value / weight))
+capacity = float(input("Enter knapsack capacity: "))
+
+for item in items:
+    print(f"Item {item.index}: value={item.value}, weight={item.weight}, "
+          f"ratio={item.ratio:.2f}")
+print("Capacity:", capacity)
+
+# %% Step 3: Greedy algorithm
+def fractional_knapsack(items, capacity):
+    """Greedy fill: best-ratio items first, fraction at the end."""
+    items = sorted(items, key=lambda item: item.ratio, reverse=True)
+
+    total_value, remaining = 0.0, capacity
+    print("\nSelected Items:")
+    for item in items:
+        if remaining <= 0:
+            break
+        if item.weight <= remaining:
+            remaining -= item.weight
+            total_value += item.value
+            print(f"Item {item.index} -> 100% selected")
+        else:
+            fraction = remaining / item.weight
+            total_value += item.value * fraction
+            print(f"Item {item.index} -> {fraction * 100:.2f}% selected")
+            remaining = 0
+    return total_value
+
+# %% Step 4: Run and print the selection
+total = fractional_knapsack(items, capacity)
+print(f"\nMaximum value = {total:.2f}")
+
+# %% Step 5: Observation
+print("\nObservation")
+print("  Items with the highest value per unit weight are taken first. Only")
+print("  the last item is split, so the knapsack is filled exactly.")

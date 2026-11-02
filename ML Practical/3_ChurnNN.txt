@@ -1,0 +1,158 @@
+"""
+QUESTION 3 (ML):
+Given a bank customer, build a neural-network-based classifier that can
+determine whether they will leave (churn) or not in the next 6 months.
+
+Dataset: https://www.kaggle.com/barelydedicated/bank-customer-churn-modeling
+
+HOW IT WORKS
+    Churn_Modelling.csv is loaded from outside the script. At run time the
+    program asks for the file path (press Enter to use Churn_Modelling.csv
+    from the current folder).
+
+    The model is a small feed-forward network:
+        input -> Dense(64, relu) -> Dense(32, relu) -> Dense(1, sigmoid)
+    The improved version adds an extra layer, dropout and early stopping.
+
+STEPS
+    1. Imports
+    2. Create the dataset file if it is missing
+    3. Load the dataset
+    4. Separate features and target, then split
+    5. Normalise the data
+    6. Build the baseline model
+    7. Train the baseline model
+    8. Build the improved model
+    9. Train the improved model
+    10. Accuracy and confusion matrix for both models
+    11. Observation
+    12. Plots with matplotlib
+
+RUN
+    python3 ml/py3_ChurnNN.py
+
+    In Jupyter, open py3_ChurnNN.ipynb or split this file at the "# %%"
+    markers.
+"""
+"""
+
+# 1. Import Libraries
+import os
+
+import pandas as pd
+import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, confusion_matrix
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Input
+from tensorflow.keras.callbacks import EarlyStopping
+
+
+# 2. Read the Dataset
+user_path = input("Enter CSV path (press Enter for Churn_Modelling.csv): ").strip().strip('"')
+DATASET_FILE = user_path if user_path else "Churn_Modelling.csv"
+while not os.path.exists(DATASET_FILE):
+    DATASET_FILE = input("File not found. Enter the path again: ").strip().strip('"')
+
+data = pd.read_csv(DATASET_FILE)
+
+print("Dataset Shape:", data.shape)
+print(data.head())
+
+# 3. Seperate Features and Target
+data = data.drop(["RowNumber", "CustomerId", "Surname"], axis=1)
+
+data = pd.get_dummies(
+    data,
+    columns=["Geography", "Gender"],
+    drop_first=True
+)
+
+X = data.drop("Exited", axis=1)
+y = data["Exited"]
+
+print("Feature shape:", X.shape)
+print("Target shape:", y.shape)
+
+# 4. Split Data into Training and Testing Sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+# 5. Normalize the Data
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# 6. Build the initial Neural Network
+initial_model = Sequential([
+    Input(shape=(X_train.shape[1],)),
+    Dense(64, activation="relu"),
+    Dense(32, activation="relu"),
+    Dense(1, activation="sigmoid")
+])
+
+initial_model.compile(
+    optimizer="adam",
+    loss="binary_crossentropy",
+    metrics=["accuracy"]
+)
+
+initial_model.summary()
+
+# 7. Improve the Model using Dropping and Early Stopping
+model = Sequential([
+    Input(shape=(X_train.shape[1],)),
+    Dense(64, activation="relu"),
+    Dropout(0.3),
+    Dense(32, activation="relu"),
+    Dropout(0.2),
+    Dense(16, activation="relu"),
+    Dense(1, activation="sigmoid")
+])
+
+model.compile(
+    optimizer="adam",
+    loss="binary_crossentropy",
+    metrics=["accuracy"]
+)
+
+early_stop = EarlyStopping(
+    monitor="val_loss",
+    patience=5,
+    restore_best_weights=True
+)
+
+model.summary()
+
+# 8. Train the Improved Model
+history = model.fit(
+    X_train,
+    y_train,
+    epochs=50,
+    batch_size=32,
+    validation_split=0.2,
+    callbacks=[early_stop],
+    verbose=1
+)
+
+# 9. Predict the Test Data
+y_pred_prob = model.predict(X_test)
+y_pred = (y_pred_prob > 0.5).astype(int).ravel()
+
+# 10. Accuracy Score
+accuracy = accuracy_score(y_test, y_pred)
+print("\nAccuracy Score:", accuracy)
+
+# 11. Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:")
+print(cm)

@@ -1,0 +1,100 @@
+"""
+QUESTION 4 (ML):
+Implement the K-Nearest Neighbors algorithm on the diabetes.csv dataset.
+Compute the confusion matrix, accuracy, error rate, precision and recall.
+
+Dataset: https://www.kaggle.com/datasets/abdallamahgoub/diabetes
+
+HOW IT WORKS
+    diabetes.csv sits in the same folder as this file. If it is missing,
+    Step 2 writes a small hardcoded demo file with the same columns.
+
+    KNN classifies a patient by looking at the 5 nearest training patients.
+    Zero values in Glucose, BloodPressure, SkinThickness, Insulin and BMI are
+    missing measurements, so they are replaced by the training median.
+    Features are standardised because KNN uses distances.
+
+STEPS
+    1. Imports
+    2. Create the dataset file if it is missing
+    3. Load the dataset
+    4. Split, impute and scale
+    5. Train KNN and predict
+    6. Confusion matrix and metrics
+    7. Observation
+    8. Plots with matplotlib
+
+RUN
+    python3 ml/py4_DiabetesKNN.py
+
+    In Jupyter, open py4_DiabetesKNN.ipynb or split this file at the
+    "# %%" markers.
+"""
+# 1. Import Libraries
+import os
+ 
+import pandas as pd
+ 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import (
+    confusion_matrix,
+    accuracy_score,
+    precision_score,
+    recall_score
+)
+ 
+# 2. Read the Dataset
+user_path = input("Enter CSV path (press Enter for diabetes.csv): ").strip().strip('"')
+DATASET_FILE = user_path if user_path else "diabetes.csv"
+while not os.path.exists(DATASET_FILE):
+    DATASET_FILE = input("File not found. Enter the path again: ").strip().strip('"')
+ 
+data = pd.read_csv(DATASET_FILE)
+ 
+print("Dataset:")
+print(data.head())
+ 
+# 3. Select Features and Target
+X = data.drop("Outcome", axis=1)
+y = data["Outcome"]
+ 
+# 4. Split the Dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+ 
+# 5. Normalize the Features
+scaler = StandardScaler()
+ 
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+ 
+# 6. Initialize and Train KNN
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+ 
+# 7. Predict the Test Data
+y_pred = knn.predict(X_test)
+ 
+# 8. Calculate Evaluation Metrics
+cm = confusion_matrix(y_test, y_pred)
+accuracy = accuracy_score(y_test, y_pred)
+error_rate = 1 - accuracy
+precision = precision_score(y_test, y_pred, zero_division=0)
+recall = recall_score(y_test, y_pred, zero_division=0)
+ 
+# 9. Display Results
+print("\nConfusion Matrix:")
+print(cm)
+ 
+print("\nAccuracy:", round(float(accuracy), 4))
+print("Accuracy Percentage:", round(float(accuracy) * 100, 2), "%")
+print("Error Rate:", round(float(error_rate), 4))
+print("Error Rate Percentage:", round(float(error_rate) * 100, 2), "%")
+print("Precision:", round(float(precision), 4))
+print("Recall:", round(float(recall), 4))

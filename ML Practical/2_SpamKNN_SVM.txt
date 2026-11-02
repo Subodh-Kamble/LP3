@@ -1,0 +1,120 @@
+"""
+QUESTION 2 (ML):
+Classify the email using the binary classification method (Normal = not
+spam / Abnormal = spam). Use K-Nearest Neighbors and Support Vector Machine
+for classification and analyze their performance.
+
+Dataset: https://www.kaggle.com/datasets/balaka18/email-spam-classification-dataset-csv
+
+HOW IT WORKS
+    emails.csv is loaded from outside the script. At run time the program
+    asks for the file path (press Enter to use emails.csv from the current
+    folder). It is already a word-count matrix:
+        Email No. : the email id
+        3000 word columns : how many times that word occurs
+        Prediction : 1 = spam, 0 = not spam
+"""
+
+# 1. Import Libraries
+import os
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score,
+    f1_score, classification_report
+)
+
+# 2. Load and Inspect Dataset
+user_path = input("Enter CSV path (press Enter for emails.csv): ").strip().strip('"')
+DATASET_FILE = user_path if user_path else "emails.csv"
+while not os.path.exists(DATASET_FILE):
+    DATASET_FILE = input("File not found. Enter the path again: ").strip().strip('"')
+
+data = pd.read_csv(DATASET_FILE)
+print("Dataset Shape:", data.shape)
+print(data.head())
+
+print("\nColumns:")
+print(data.columns)
+
+# 3. Clean Data
+data = data.drop(columns=["Email No."], errors="ignore")
+data = data.drop_duplicates().dropna(subset=["Prediction"]).copy()
+print("Cleaned Dataset Shape:", data.shape)
+print("\nClass Distribution:")
+print(data["Prediction"].value_counts())
+
+# 4. Select Features and Split Dataset
+X = data.drop(columns=["Prediction"])
+y = data["Prediction"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+print("Training samples:", len(X_train))
+print("Testing samples:", len(X_test))
+
+# 5. TF-IDF Feature Extraction
+tfidf = TfidfTransformer()
+X_train_tfidf = tfidf.fit_transform(X_train)
+X_test_tfidf = tfidf.transform(X_test)
+print("Training TF-IDF shape:", X_train_tfidf.shape)
+print("Testing TF-IDF shape:", X_test_tfidf.shape)
+
+# 6. Train and Evaluate KNN
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train_tfidf, y_train)
+y_pred_knn = knn.predict(X_test_tfidf)
+
+knn_accuracy = accuracy_score(y_test, y_pred_knn)
+knn_precision = precision_score(y_test, y_pred_knn, zero_division=0)
+knn_recall = recall_score(y_test, y_pred_knn, zero_division=0)
+knn_f1 = f1_score(y_test, y_pred_knn, zero_division=0)
+
+print("----- KNN PERFORMANCE -----")
+print("Accuracy :", knn_accuracy)
+print("Precision:", knn_precision)
+print("Recall   :", knn_recall)
+print("F1 Score :", knn_f1)
+print("\nClassification Report - KNN")
+print(classification_report(y_test, y_pred_knn, zero_division=0))
+
+# 7. Train and Evaluate SVM
+svm = SVC(kernel="linear")
+svm.fit(X_train_tfidf, y_train)
+y_pred_svm = svm.predict(X_test_tfidf)
+
+svm_accuracy = accuracy_score(y_test, y_pred_svm)
+svm_precision = precision_score(y_test, y_pred_svm, zero_division=0)
+svm_recall = recall_score(y_test, y_pred_svm, zero_division=0)
+svm_f1 = f1_score(y_test, y_pred_svm, zero_division=0)
+
+print("----- SVM PERFORMANCE -----")
+print("Accuracy :", svm_accuracy)
+print("Precision:", svm_precision)
+print("Recall   :", svm_recall)
+print("F1 Score :", svm_f1)
+print("\nClassification Report - SVM")
+print(classification_report(y_test, y_pred_svm, zero_division=0))
+
+# 8. Model Comparison
+results = pd.DataFrame({
+    "Model": ["KNN", "SVM"],
+    "Accuracy": [knn_accuracy, svm_accuracy],
+    "Precision": [knn_precision, svm_precision],
+    "Recall": [knn_recall, svm_recall],
+    "F1 Score": [knn_f1, svm_f1]
+})
+print("----- MODEL COMPARISON -----")
+print(results.to_string(index=False))
+
+if svm_accuracy > knn_accuracy:
+    print("SVM performs better than KNN based on accuracy.")
+elif knn_accuracy > svm_accuracy:
+    print("KNN performs better than SVM based on accuracy.")
+else:
+    print("Both models have the same accuracy.")
