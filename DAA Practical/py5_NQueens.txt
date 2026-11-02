@@ -96,3 +96,42 @@ for size in range(1, 9):
 print("\nObservation")
 print("  Fixing the first queen can make the puzzle impossible for some N.")
 print("  Backtracking removes a queen as soon as no safe column remains.")
+
+
+
+/*
+
+Oral explanation:
+
+"My fifth practical is the N-Queens Problem using Backtracking.
+
+The objective is to place N queens on an N by N chessboard such that no two queens attack each other.
+
+In chess, a queen can attack horizontally, vertically and diagonally. Therefore, we must ensure that no two queens share the same row, column or diagonal.
+
+In our Java program, we use a two-dimensional integer array to represent the chessboard. Zero represents an empty cell and one represents a queen.
+
+We solve this problem row by row.
+
+First, we try to place a queen in a column of the current row. Before placing it, we call the isSafe function to check whether the position is safe.
+
+If the position is safe, we place the queen and recursively move to the next row.
+
+If no valid position is available in the next row, we backtrack. This means we remove the previously placed queen and try another column.
+
+When the row becomes equal to N, it means all queens have been successfully placed, and we have found a solution.
+
+For example, the N=4 problem has two possible solutions.
+
+The commonly stated time complexity is O(N!), while the board requires O(N²) space, with additional recursion space."
+
+Remember:
+- Algorithm: Backtracking
+- Data structure: 2D array
+- 1 = Queen, 0 = Empty
+- isSafe() checks column and diagonals.
+- Backtracking means undoing a choice and trying another.
+- N=2 and N=3 have no solutions.
+
+
+*/
