@@ -122,3 +122,34 @@ print(f"Compression   : {len(encoded) / (len(text) * 8) * 100:.1f}% of ASCII")
 print("\nObservation")
 print("  The most frequent characters get the shortest codes. No code is a")
 print("  prefix of another, so the decoder never has to guess where a code ends.")
+
+
+
+/*Oral explanation:
+
+"Good morning. My second practical is Huffman Encoding using the Greedy Algorithm.
+
+Huffman Encoding is a lossless data compression technique. It assigns variable-length binary codes to characters based on their frequency. Characters that occur more frequently get shorter codes, while less frequent characters get longer codes.
+
+First, we calculate the frequency of every character in the input text. Then we insert all characters into a Priority Queue according to their frequency.
+
+After that, we repeatedly remove the two nodes having the minimum frequency and combine them into a new parent node. The frequency of the parent is the sum of both child frequencies. We repeat this process until only one node remains. This forms the Huffman Tree.
+
+Next, we generate binary codes by traversing the tree. The left branch represents 0 and the right branch represents 1.
+
+Finally, we encode the original text using these codes and decode it to get the original text back.
+
+We use a Priority Queue, TreeMap, recursion and StringBuilder in Java.
+
+The overall tree-building complexity is O(k log k), where k is the number of unique characters."
+
+Remember:
+- Algorithm: Greedy
+- Data structure: Priority Queue and Binary Tree
+- Left = 0, Right = 1
+- It is lossless compression.
+- Prefix-free codes prevent ambiguity.
+
+
+
+*/
